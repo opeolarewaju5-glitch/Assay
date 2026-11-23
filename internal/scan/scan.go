@@ -398,12 +398,21 @@ func (s *Scanner) Subject(ctx context.Context, a mechanics.Asset) (*mechanics.Su
 	issuer, err := s.Horizon.Account(acctCtx, a.Issuer)
 	cancelAcct()
 	if err != nil {
-		return nil, fmt.Errorf("scan: fetch issuer account: %w", err)
-	}
-	sub.Issuer = issuer
-	sub.IssuerFetchedAt = s.now()
-	if issuer != nil {
-		sub.IssuerLedger = issuer.LatestLedger
+		if errors.Is(err, horizon.ErrNotFound) {
+			// The issuer account has been merged: the /accounts endpoint returned
+			// 404. The asset record may still exist. Mark the subject so the
+			// capability check can report undetermined rather than treating the
+			// absence as a clean single-source read.
+			sub.IssuerMerged = true
+		} else {
+			return nil, fmt.Errorf("scan: fetch issuer account: %w", err)
+		}
+	} else {
+		sub.Issuer = issuer
+		sub.IssuerFetchedAt = s.now()
+		if issuer != nil {
+			sub.IssuerLedger = issuer.LatestLedger
+		}
 	}
 
 	var (

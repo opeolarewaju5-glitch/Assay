@@ -241,6 +241,11 @@ type Subject struct {
 	IssuerFetchedAt time.Time
 	// IssuerLedger is the ledger sequence Horizon reported for the /accounts query.
 	IssuerLedger int64
+	// IssuerMerged is set when the issuer account returned 404 from Horizon's
+	// /accounts endpoint, indicating the account has been merged. The asset
+	// record (Stat) may still exist. The capability check is undetermined in
+	// this case because the second copy of flags is unavailable.
+	IssuerMerged bool
 
 	// Toml is the issuer's stellar.toml if it resolved. TomlErr records why it
 	// did not, and is reported verbatim rather than being smoothed over.
