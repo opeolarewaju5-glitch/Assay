@@ -55,8 +55,8 @@ func LoadSubject(fixturesDir, dir string) (*mechanics.Subject, error) {
 		return nil, err
 	}
 	s := &mechanics.Subject{
-		Asset:     mechanics.Asset{Code: stat.AssetCode, Issuer: stat.AssetIssuer},
-		Stat:      &stat,
+		Asset:         mechanics.Asset{Code: stat.AssetCode, Issuer: stat.AssetIssuer},
+		Stat:          &stat,
 		StatFetchedAt: fixtureTime,
 		StatLedger:    stat.LatestLedger,
 		ScannedAt:     fixtureTime,
